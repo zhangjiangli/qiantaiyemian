@@ -122,7 +122,7 @@ export default {
 
 <style scoped>
 .my-location{
-    height: 80px;
+    
     position: absolute;
     left: 0px;
     top: 0px;
