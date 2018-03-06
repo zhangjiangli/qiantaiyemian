@@ -1,9 +1,8 @@
 <template>
     <div>
-        商品列表
         <!-- 面包屑 -->
         <div class="section">
-            <div class="location">
+            <div class="location my-location">
                 <span>当前位置：</span>
                 <router-link to="">首页</router-link>
                 <router-link to="">购物商城</router-link>
@@ -122,6 +121,12 @@ export default {
 </script>
 
 <style scoped>
+.my-location{
+    height: 80px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
 .my-carousel__container{
      height: 341px; 
 }
