@@ -79,12 +79,8 @@
                                         <dt>购买数量</dt>
                                         <dd>
                                             <div class="stock-box">
-                                                <input id="commodityChannelId" type="hidden" value="2">
-                                                <input id="commodityArticleId" type="hidden" value="98">
-                                                <input id="commodityGoodsId" type="hidden" value="0">
-                                                <input id="commoditySelectNum" type="text" maxlength="9" value="1" maxvalue="10" onkeydown="return checkNumber(event);">
-                                                <a class="add" onclick="addCartNum(1);">+</a>
-                                                <a class="remove" onclick="addCartNum(-1);">-</a>
+                                                <!-- 用element-ui的组件 v-model双向数据绑定-->
+                                                <el-input-number size="mini" :min="1" v-model="num"></el-input-number>
                                             </div>
                                             <span class="stock-txt">
                                                 库存
@@ -236,35 +232,57 @@ export default {
                     this.goodsDetail = res.data.message;
                 }
             })
+        },
+
+        //放大镜初始化方法
+        fdj() {
+            $(function() {
+
+                var magnifierConfig = {
+                    magnifier: "#magnifier1",//最外层的大容器
+                    width: 380,//承载容器宽
+                    height: 380,//承载容器高
+                    moveWidth: null,//如果设置了移动盒子的宽度，则不计算缩放比例
+                    zoom: 3//缩放比例
+                };
+
+                //因为我们使用v-for动态生成列表，调用该方法时不能保证列表已经构建完毕, 所以延时一下
+                //调用这个插件，必须保证放大镜相关的DOM节点都已正常构建渲染
+                setTimeout(function() {
+                    var _magnifier = $().imgzoon(magnifierConfig);
+                }, 200);
+
+
+
+            })
         }
+
     },
 
     created() {
         this.getGoodsDetail();
     },
-    
+
+    // 商品详情页面的右侧列表, 可以点击切换不同的商品进行预览
+    // 但是默认情况下当前页面切换到当前页面不会触发组件的重新渲染, 为了解决这个问题,
+    // 我们可以监听route对象的变化, 因为切换商品后, route.params.id变化了, 我们监听它, 
+    // 然后主动发起http请求, 调用接口获取新id的数据进行视图刷新
+
+    watch: {
+        $route() {
+            this.id = this.$route.params.id;
+            this.getGoodsDetail();
+        },
+
+        // 监听放大镜图片数据的变化, 变化后重新调用插件初始化方法
+        goodsDetail() {
+            this.fdj();
+        }
+    },
 
     //视图挂载到页面上了, 这里可操作DOM
     mounted() {
-        $(function() {
-
-            var magnifierConfig = {
-                magnifier: "#magnifier1",//最外层的大容器
-                width: 380,//承载容器宽
-                height: 380,//承载容器高
-                moveWidth: null,//如果设置了移动盒子的宽度，则不计算缩放比例
-                zoom: 3//缩放比例
-            };
-
-            //因为我们使用v-for动态生成列表，调用该方法时不能保证列表已经构建完毕, 所以延时一下
-            //调用这个插件，必须保证放大镜相关的DOM节点都已正常构建渲染
-            setTimeout(function() {
-                var _magnifier = $().imgzoon(magnifierConfig);
-            }, 500);
-
-
-
-        })
+        this.fdj();
     },
 
 
