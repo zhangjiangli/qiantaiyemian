@@ -31,24 +31,21 @@
                     <div class="inner-box">
                         <div class="info">
                             <span>{{item.user_name}}</span>
-                            <span>{{item.add_time}}</span>
+                            <span>{{item.add_time | date}}</span>
                         </div>
                         <p>{{item.content}}</p>
                     </div>
                 </li>
             </ul>
-            <!--放置页码-->
-            <div class="page-box" style="margin:5px 0 0 62px">
-                <div id="pagination" class="digg">
-                    <span class="disabled">« 上一页</span>
-                    <span class="current">1</span>
-                    <span class="disabled">下一页 »</span>
-                </div>
-            </div>
-            <!--/放置页码-->
+
         </div>
 
-        <!--/网友评论-->
+        <!--放置页码-->
+        <div class="block">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageIndex" :page-sizes="[2, 4, 8,10]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalcount">
+            </el-pagination>
+        </div>
+        <!--/放置页码-->
     </div>
 </template>
 
@@ -68,8 +65,21 @@ export default {
             },
 
             //分页
+
+            totalcount: '',
             pageIndex: '1',
             pageSize: '10'
+
+
+
+        }
+    },
+    //局部过滤器
+    filters: {
+        //日期过滤器
+        date(tplDate){
+            let date=new Date(tplDate);
+            return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
 
         }
     },
@@ -82,29 +92,49 @@ export default {
             this.$http.get(url).then(res => {
                 if (res.data.status == 0) {
                     this.comments = res.data.message;
-                    
+
+                    this.totalcount = res.data.totalcount;
+                    this.pageIndex = res.data.pageIndex;
+                    this.pageSize = res.data.pageSize;
+
+
                 }
             })
         },
 
         //发表评论
-         sendComments(){
-             
-             let url=`${this.$api.comment}goods/${this.id}`;
-            this.$http.post(url,this.submitComments).then(res=>{
-                if(res.data.status == 0) {
-                    console.log("gggggggggg");
+        sendComments() {
+
+            let url = `${this.$api.comment}goods/${this.id}`;
+            this.$http.post(url, this.submitComments).then(res => {
+                if (res.data.status == 0) {
                     // 成功后清空评论框
-                    this.submitComments.commenttxt='';
+                    this.submitComments.commenttxt = '';
                     // 成功后刷新评论列表
                     this.getComments();
                 }
-            }) 
-        } 
+            })
+        },
+
+        //分页数据
+        handleSizeChange(size) {
+            this.pageSize = size;
+            //重新调用获取评论列表方法
+            this.getComments();
+        },
+        handleCurrentChange(page) {
+            this.pageIndex = page;
+            //重新调用获取评论列表方法
+            this.getComments();
+        }
     },
 
     created() {
         this.getComments();
+
+        this.totalcount = +this.totalcount;
+        this.pageIndex = +this.pageIndex;
+        this.pageSize = +this.pageSize;
     },
 
     // 当用户访问新的商品时, 需要重新调接口获取新商品的评论列表进行渲染

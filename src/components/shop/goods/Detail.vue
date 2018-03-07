@@ -170,6 +170,7 @@ export default {
         }
     },
     methods: {
+        
         //根据当前id获取数据
         getGoodsDetail() {
             this.$http.get(this.$api.goodsDetail + this.id).then(res => {
