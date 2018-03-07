@@ -1,6 +1,7 @@
 <template>
     <div>
         <div class="left-220">
+            <h3>推荐商品</h3>
             <ul class="side-img-list">
 
                 <li v-for="(item,index) in list" :key="item.id">
@@ -38,6 +39,19 @@ export default {
 }   
 </script>
 
-<style scoped>
+<style scoped lang="less">
+.left-220{
+    height: 100%;
+    background: #fff;
+    
 
+    h3{
+        padding: 20px 0 10px 0;
+        margin-left: 16px; 
+        margin-right: 16px;
+        border-bottom: 1px #ccc solid;
+    }
+    
+
+}
 </style>

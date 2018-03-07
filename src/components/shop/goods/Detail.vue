@@ -101,19 +101,28 @@
                             </div>
                             <!--/商品信息-->
                         </div>
-
+                        <!-- 商品详情与评论 -->
                         <div id="goodsTabs" class="goods-tab bg-wrap">
                             <!--选项卡-->
-                            <div id="tabHead" class="tab-head" style="position: static; top: 517px; width: 925px;">
-                                <ul>
-                                    <li>
-                                        <a class="selected" href="javascript:;">商品介绍</a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:;" class="">商品评论</a>
-                                    </li>
-                                </ul>
-                            </div>
+                            <!-- <div id="tabHead" class="tab-head" style="position: static; top: 517px; width: 925px;">
+                                    <ul>
+                                        <li>
+                                            <a class="selected" href="javascript:;">商品介绍</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;" class="">商品评论</a>
+                                        </li>
+                                    </ul>
+                                </div> -->
+                            <el-tabs type="border-card">
+                                <el-tab-pane label="商品介绍">
+                                    <div v-html="goodsDetail.goodsinfo.content"></div>
+                                </el-tab-pane>
+                                <el-tab-pane label="商品评论">
+                                    <comment :id="id"></comment>
+                                </el-tab-pane>
+                                
+                            </el-tabs>
                             <!--/选项卡-->
 
                             <!--选项内容-->
@@ -198,6 +207,7 @@
 <script>
 //引入公共右侧边栏-商品列表 
 import AppAside from './subcom/CommonAside.vue'
+import Comment from './subcom/CommonComment.vue'
 
 //导入插件的css与js以及jquery
 import '@/lib/imgzoom/css/magnifier.css'
@@ -206,7 +216,8 @@ import $ from 'jquery'
 
 export default {
     components: {
-        AppAside
+        AppAside,
+        Comment
     },
     data() {
         return {
@@ -240,8 +251,8 @@ export default {
 
                 var magnifierConfig = {
                     magnifier: "#magnifier1",//最外层的大容器
-                    width: 380,//承载容器宽
-                    height: 380,//承载容器高
+                    width: 370,//承载容器宽
+                    height: 370,//承载容器高
                     moveWidth: null,//如果设置了移动盒子的宽度，则不计算缩放比例
                     zoom: 3//缩放比例
                 };
