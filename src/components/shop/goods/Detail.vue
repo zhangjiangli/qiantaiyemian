@@ -91,8 +91,8 @@
                                     <dl>
                                         <dd>
                                             <div class="btn-buy" id="buyButton">
-                                                <button class="buy" onclick="cartAdd(this,'/',1,'/shopping.html');">立即购买</button>
-                                                <button class="add" onclick="cartAdd(this,'/',0,'/cart.html');">加入购物车</button>
+                                                <button class="buy" @click="cartAdd(this,'/',1,'/shopping.html');">立即购买</button>
+                                                <button class="add" @click="addGoods">加入购物车</button>
                                             </div>
                                         </dd>
                                     </dl>
@@ -105,15 +105,15 @@
                         <div id="goodsTabs" class="goods-tab bg-wrap">
                             <!--选项卡-->
                             <!-- <div id="tabHead" class="tab-head" style="position: static; top: 517px; width: 925px;">
-                                    <ul>
-                                        <li>
-                                            <a class="selected" href="javascript:;">商品介绍</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:;" class="">商品评论</a>
-                                        </li>
-                                    </ul>
-                                </div> -->
+                                                <ul>
+                                                    <li>
+                                                        <a class="selected" href="javascript:;">商品介绍</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="javascript:;" class="">商品评论</a>
+                                                    </li>
+                                                </ul>
+                                            </div> -->
                             <el-tabs type="border-card">
                                 <el-tab-pane label="商品介绍">
                                     <div v-html="goodsDetail.goodsinfo.content"></div>
@@ -121,7 +121,7 @@
                                 <el-tab-pane label="商品评论">
                                     <comment :id="id"></comment>
                                 </el-tab-pane>
-                                
+
                             </el-tabs>
                             <!--/选项卡-->
 
@@ -149,6 +149,10 @@ import '@/lib/imgzoom/css/magnifier.css'
 import '@/lib/imgzoom/js/magnifier.js'
 import $ from 'jquery'
 
+/* import Vue from 'vue'
+import vuex from 'vuex'
+
+Vue.use(vuex) */
 export default {
     components: {
         AppAside,
@@ -159,7 +163,7 @@ export default {
             //拿到首页页面点击商品跳转的id
             id: this.$route.params.id,
             //购物车初始数量
-            num: 1,
+            num: 0,
             goodsDetail: {
                 goodsinfo: {},
                 imglist: [],
@@ -169,8 +173,9 @@ export default {
 
         }
     },
+
     methods: {
-        
+        cartAdd() { },
         //根据当前id获取数据
         getGoodsDetail() {
             this.$http.get(this.$api.goodsDetail + this.id).then(res => {
@@ -202,6 +207,16 @@ export default {
 
 
             })
+        },
+
+        //点击添加购物车
+        addGoods() {
+            //vuex中调用方法 用$store.commit(方法名,参数)
+            // this.$store.commit('modify', { id: this.id, num: this.num });
+            let newNum = this.num + (this.$store.state.carts[this.id] || 0); // 当前数量加上以前的数量
+            this.$store.commit('modify', { id: this.id, num: newNum  });
+            //加载完之后重置计数框
+            this.num = 0;
         }
 
     },

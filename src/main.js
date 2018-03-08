@@ -6,16 +6,22 @@ import router from './router'
 
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import storeCarts from './store/carts.js'
 
 import 'normalize.css'
 
 import axios from 'axios'
 import api ,{domain} from './js/api.js'
 
+
 import './less/index.less'
 import './assets/css/style.css'
 
+import Vuex from 'vuex'
+
 Vue.use(ElementUI)
+Vue.use(Vuex)
+
 
 // 配置默认域名, 这样请求的时候就不用在url里每次手动加域名了
 axios.defaults.baseURL=domain;
@@ -34,4 +40,6 @@ new Vue({
   /* components: { App },
   template: '<App/>' */
   render:createElement=>createElement(App),
+  // store:new Vuex.Store(storeCart)
+  store:new Vuex.Store(storeCarts)
 })
