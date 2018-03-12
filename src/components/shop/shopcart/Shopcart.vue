@@ -186,9 +186,14 @@ export default {
 
         //立即结算按钮，跳转到信息填写页面
         pay(){
+            
             //先找出被选中的商品，然后提取商品中的id
             let ids=this.shopCart.filter(v=>v.selected).map(v=>v.id)
-            console.log(ids);
+            // console.log(ids);
+            if (ids.length==0) {
+                this.$message('亲，您没有要结算的商品哦');
+                return;
+            }
             // 把选中的商品ID传递到下个页面使用 => 这里的ids记得变成字符串再传递
             this.$router.push({name:'orderSite',params:{ids:ids.join(',')}});
         }

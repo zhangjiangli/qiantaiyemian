@@ -44,13 +44,16 @@
                         <h2 class="slide-tit">
                             <span>1、收货地址</span>
                         </h2>
-                        <form id="orderForm" name="orderForm" url="/tools/submit_ajax.ashx?action=order_save&amp;site_id=1">
+                        <!-- @submit.prevent="submit"表示将表单提交后的处理函数，prevent表示阻止默认行为 -->
+                        <form id="orderForm" name="orderForm" @submit.prevent="submit">
                             <div class="form-box address-info">
                                 <dl class="form-group">
                                     <dt>收货人姓名：</dt>
                                     <dd>
+                                        <!-- 隐藏域 -->
                                         <input name="book_id" id="book_id" type="hidden" value="0">
-                                        <input name="accept_name" id="accept_name" type="text" class="input" value="" datatype="s2-20" sucmsg=" ">
+                                        <!-- accept_name要跟后台名一样 -->
+                                        <input v-model="form.accept_name" name="accept_name" id="accept_name" type="text" class="input" value="" datatype="s2-20" sucmsg=" ">
                                         <span class="Validform_checktip">*收货人姓名</span>
                                     </dd>
                                 </dl>
@@ -107,35 +110,35 @@
                                 <dl class="form-group">
                                     <dt>详细地址：</dt>
                                     <dd>
-                                        <input name="address" id="address" type="text" class="input" value="" datatype="*2-100" sucmsg=" ">
+                                        <input v-model="form.address" name="address" id="address" type="text" class="input" value="" datatype="*2-100" sucmsg=" ">
                                         <span class="Validform_checktip">*除上面所属地区外的详细地址</span>
                                     </dd>
                                 </dl>
                                 <dl class="form-group">
                                     <dt>手机号码：</dt>
                                     <dd>
-                                        <input name="mobile" id="mobile" type="text" class="input" value="" datatype="m" sucmsg=" ">
+                                        <input v-model="form.mobile" name="mobile" id="mobile" type="text" class="input" value="" datatype="m" sucmsg=" ">
                                         <span class="Validform_checktip">*收货人的手机号码</span>
                                     </dd>
                                 </dl>
                                 <dl class="form-group">
                                     <dt>联系电话：</dt>
                                     <dd>
-                                        <input name="telphone" id="telphone" type="text" class="input" value="">
+                                        <input v-model="form.mobile" name="telphone" id="telphone" type="text" class="input" value="">
                                         <span class="Validform_checktip">收货人的联系电话，非必填</span>
                                     </dd>
                                 </dl>
                                 <dl class="form-group">
                                     <dt>电子邮箱：</dt>
                                     <dd>
-                                        <input name="email" id="email" type="text" class="input" value="">
+                                        <input v-model="form.email" name="email" id="email" type="text" class="input" value="">
                                         <span class="Validform_checktip">方便通知订单状态，非必填</span>
                                     </dd>
                                 </dl>
                                 <dl class="form-group">
                                     <dt>邮政编码：</dt>
                                     <dd>
-                                        <input name="post_code" id="post_code" type="txt" class="input code">
+                                        <input v-model="form.post_code" name="post_code" id="post_code" type="txt" class="input code">
                                         <span class="Validform_checktip">所在地区的邮政编码，非必填</span>
                                     </dd>
                                 </dl>
@@ -147,9 +150,8 @@
                                 <!--取得一个DataTable-->
                                 <li>
                                     <label>
-                                        <input name="payment_id" type="radio" onclick="paymentAmountTotal(this);" value="1">
-                                        <input name="payment_price" type="hidden" value="0.00">在线支付
-                                        <em>手续费：0.00元</em>
+
+                                        <el-radio v-model="form.payment_id" label="6">在线支付</el-radio>
                                     </label>
                                 </li>
                             </ul>
@@ -160,10 +162,23 @@
                                 <!--取得一个DataTable-->
                                 <li>
                                     <label>
-                                        <input name="express_id" type="radio" onclick="freightAmountTotal(this);" value="1" datatype="*" sucmsg=" ">
-                                        <input name="express_price" type="hidden" value="20.00">顺丰快递
+                                        <el-radio v-model="form.express_id" label="1">顺丰</el-radio>
                                         <em>费用：20.00元</em>
-                                        <span class="Validform_checktip"></span>
+
+                                    </label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <el-radio v-model="form.express_id" label="2">圆通</el-radio>
+                                        <em>费用：10.00元</em>
+
+                                    </label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <el-radio v-model="form.express_id" label="3">韵达</el-radio>
+                                        <em>费用：8.00元</em>
+
                                     </label>
                                 </li>
                             </ul>
@@ -216,23 +231,23 @@
                                     <dl>
                                         <dt>订单备注(100字符以内)</dt>
                                         <dd>
-                                            <textarea name="message" class="input" style="height:35px;"></textarea>
+                                            <textarea v-model="form.message" name="message" class="input" style="height:35px;"></textarea>
                                         </dd>
                                     </dl>
                                 </div>
                                 <div class="right-box">
                                     <p>
                                         商品
-                                        <label class="price">1</label> 件&nbsp;&nbsp;&nbsp;&nbsp; 商品金额：￥
-                                        <label id="goodsAmount" class="price">2299.00</label> 元&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <label class="price">{{total}}</label> 件&nbsp;&nbsp;&nbsp;&nbsp; 商品金额：￥
+                                        <label id="goodsAmount" class="price">{{totalPrice}}.00</label> 元&nbsp;&nbsp;&nbsp;&nbsp;
                                     </p>
                                     <p>
                                         运费：￥
-                                        <label id="expressFee" class="price">0.00</label> 元
+                                        <label id="expressFee" class="price">{{expressPrice}}.00</label> 元
                                     </p>
                                     <p class="txt-box">
                                         应付总金额：￥
-                                        <label id="totalAmount" class="price">2299.00</label>
+                                        <label id="totalAmount" class="price">{{orderPrice}}.00</label>
                                     </p>
                                     <p class="btn-box">
                                         <a class="btn button" href="/cart.html">返回购物车</a>
@@ -253,12 +268,38 @@ export default {
     /* 拿到上个页面的id */
     data() {
         return {
+
             ids: this.$route.params.ids,
             goodsList: [],
-            // form:{}
+            //存提交的数据
+            form: {
+                express_id: '1', //默认选中顺丰
+                payment_id: '6' //默认选中在线支付
+            },
+            expressPriceTable:{1:20,2:10,3:8} // 快递ID与价格映射表
         }
     },
+    //计算属性 因为商品总数总额等依赖于
+    computed: {
+        //总数
+        total() {
+            return this.goodsList.reduce((sum, v) => sum += this.$store.state.carts[v.id], 0);
+        },
+        totalPrice() {
+            return this.goodsList.reduce((sum, v) => sum += this.$store.state.carts[v.id] * v.sell_price, 0);
+        },
 
+        //快递费
+        expressPrice(){
+            return this.expressPriceTable[this.form.express_id];
+        },
+
+        //完整总价
+        orderPrice(){
+            return this.totalPrice+this.expressPrice;
+        }
+
+    },
     methods: {
         //获取下单的商品列表数据
         getGoodsList() {
@@ -268,10 +309,19 @@ export default {
                     this.goodsList = res.data.message;
                 }
             })
+        },
+
+        // 下订单按钮, 成功后跳转到付款页面
+        submit() {
+            this.$http.post(this.$api.orderSubmit, this.form).then(res => {
+                if (res.data.status == 0) {
+                    this.$router.push({ name: 'orderPay', params: { id: 1 } });
+                }
+            })
         }
     },
 
-    created () {
+    created() {
         this.getGoodsList();
     }
 }
