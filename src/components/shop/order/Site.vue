@@ -179,24 +179,29 @@
                                         <th width="84" align="center">购买数量</th>
                                         <th width="104" align="left">金额(元)</th>
                                     </tr>
-                                    <tr>
+                                    <tr v-for="item in goodsList" :key="item.id">
                                         <td width="68">
-                                            <a target="_blank" href="/goods/show-89.html">
-                                                <img src="/upload/201504/20/thumb_201504200119256512.jpg" class="img">
-                                            </a>
+                                            <!-- 链接跳转到商品详情页面 params表示参数-->
+                                            <router-link :to="{name:'goodsDetail',params:{id:item.id}}">
+                                                <img :src="item.img_url" class="img">
+                                            </router-link>
                                         </td>
                                         <td>
-                                            <a target="_blank" href="/goods/show-89.html">小米（Mi）小米Note 16G双网通版</a>
+                                            <router-link :to="{name:'goodsDetail',params:{id:item.id}}">
+                                                {{item.title}}
+                                            </router-link>
                                         </td>
                                         <td>
                                             <span class="red">
-                                                ￥2299.00
+                                                ￥{{item.sell_price}}.00
                                             </span>
                                         </td>
-                                        <td align="center">1</td>
+                                        <td align="center">
+                                            {{$store.state.carts[item.id]}}
+                                        </td>
                                         <td>
                                             <span class="red">
-                                                ￥2299.00
+                                                ￥{{ item.sell_price * $store.state.carts[item.id] }}.00
                                             </span>
                                         </td>
                                     </tr>
@@ -245,7 +250,30 @@
 
 <script>
 export default {
+    /* 拿到上个页面的id */
+    data() {
+        return {
+            ids: this.$route.params.ids,
+            goodsList: [],
+            // form:{}
+        }
+    },
 
+    methods: {
+        //获取下单的商品列表数据
+        getGoodsList() {
+            this.$http.get(this.$api.shopcartGoods + this.ids).then(res => {
+                if (res.data.status == 0) {
+                    //修改data数据，视图刷新
+                    this.goodsList = res.data.message;
+                }
+            })
+        }
+    },
+
+    created () {
+        this.getGoodsList();
+    }
 }
 </script>
 

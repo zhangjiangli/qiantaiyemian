@@ -115,7 +115,7 @@
                     <div class="cart-foot clearfix">
                         <div class="right-box">
                             <button class="button" @click="$router.go(-1)">继续购物</button>
-                            <button class="submit" onclick="formSubmit(this, '/', '/shopping.html');">立即结算</button>
+                            <button class="submit" @click="pay">立即结算</button>
                         </div>
                     </div>
                     <!--购物车底部-->
@@ -183,6 +183,15 @@ export default {
             this.shopCart = this.shopCart.filter(v => v.id != id); // 找出不删除的商品
             this.$store.commit('del', id);                           // 调用mutaions方法删除
         },
+
+        //立即结算按钮，跳转到信息填写页面
+        pay(){
+            //先找出被选中的商品，然后提取商品中的id
+            let ids=this.shopCart.filter(v=>v.selected).map(v=>v.id)
+            console.log(ids);
+            // 把选中的商品ID传递到下个页面使用 => 这里的ids记得变成字符串再传递
+            this.$router.push({name:'orderSite',params:{ids:ids.join(',')}});
+        }
     },
     created() {
         this.getshopcargoods();
